@@ -8,28 +8,9 @@ Tile::~Tile()
 {
 }
 
-void Tile::addLayer(sf::Sprite layer)
-{
-    layer.setPosition(this->position);
-    this->layers.push_back(layer);
-}
-
-sf::Sprite Tile::popLayer()
-{
-    auto layer = this->layers.back();
-    this->layers.pop_back();
-    return layer;
-}
-
 const sf::Vector2f &Tile::getPosition() const
 {
     return this->position;
-}
-
-void Tile::draw(sf::RenderWindow &window)
-{
-    for (sf::Sprite layer : this->layers)
-        window.draw(layer);
 }
 
 Tile *Tile::getNeighbour(const Tile::Direction &direction)

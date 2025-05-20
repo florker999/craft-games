@@ -1,4 +1,3 @@
-#include <vector>
 #include <SFML/Graphics.hpp>
 
 #ifndef TILE_H
@@ -12,10 +11,7 @@ public:
     Tile(const sf::Vector2f &position);
     ~Tile();
 
-    void addLayer(sf::Sprite layer);
-    sf::Sprite popLayer();
     const sf::Vector2f &getPosition() const;
-    void draw(sf::RenderWindow &window);
 
     enum Direction
     {
@@ -32,7 +28,6 @@ public:
     Tile *leftNeighbour;
 
 private:
-    std::vector<sf::Sprite> layers; // later change maybe to item
     sf::Vector2f position;
 };
 
