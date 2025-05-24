@@ -32,6 +32,8 @@ public:
     Map(const std::vector<std::vector<GroundType>> &mapTemplate, const sf::Texture &grassTexture, const sf::Texture &waterTexture, int tileSize);
     ~Map();
 
+    static const std::vector<std::vector<GroundType>> testMap;
+
     sf::Texture transparentTexture;
 
     //void fill(Tile *tile, Tile *tile2);
