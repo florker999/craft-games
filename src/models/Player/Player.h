@@ -2,13 +2,14 @@
 #include <SFML/System.hpp>
 #include "../Tile/Tile.h"
 #include "../Drawable/Drawable.h"
+#include "../Animation/Animation.h"
 
 #ifndef PLAYER_H
 #define PLAYER_H
 
 #pragma once
 
-class Player : public Drawable
+class Player : public Animation
 {
 public:
     Player(const sf::Texture &texture);
@@ -21,7 +22,6 @@ public:
 
 private:
     Tile *tile;
-    sf::Clock clock;
 };
 
 #endif

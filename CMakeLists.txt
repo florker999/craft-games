@@ -26,6 +26,7 @@ add_executable(CraftedGame
     ./src/models/Wall/Wall.cpp
     ./src/models/Drawable/Drawable.cpp
     ./src/models/Item/Item.cpp
+    ./src/models/Animation/Animation.cpp
 )
 target_compile_features(CraftedGame PRIVATE cxx_std_17)
 target_link_libraries(CraftedGame PRIVATE SFML::Graphics)

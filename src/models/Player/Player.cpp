@@ -1,7 +1,7 @@
 #include "Player.h"
 #include "../Walkable/Walkable.h"
 
-Player::Player(const sf::Texture &texture) : Drawable{texture, {0, 0}}
+Player::Player(const sf::Texture &texture) : Animation{texture, {0, 0}, 6, sf::seconds(1)}
 {
     sf::Vector2u textureSize = texture.getSize();
     int texturePartX{static_cast<int>(textureSize.x) / 6},
@@ -36,21 +36,6 @@ void Player::move(const Tile::Direction &direction)
 
 Player::operator sf::Sprite()
 {
-    auto elapsedTime = this->clock.getElapsedTime().asSeconds();
-    bool nextTexturePartShouldBeDrawn = elapsedTime > 0.4;
-    if (nextTexturePartShouldBeDrawn)
-    {
-        sf::IntRect textureRect = this->sprite.getTextureRect();
-        const sf::Texture &texture = this->sprite.getTexture();
-        if (textureRect.position.x < texture.getSize().x - textureRect.size.x)
-        {
-            textureRect.position.x += textureRect.size.x;
-        }
-        else
-            textureRect.position.x = 0;
-
-        this->sprite.setTextureRect(textureRect);
-        this->clock.restart();
-    }
+    this->animate();
     return this->sprite;
 }
