@@ -1,16 +1,16 @@
 #include "Player.h"
+#include "../Walkable/Walkable.h"
 
-Player::Player(sf::Texture &texture) : spr{texture}
+Player::Player(const sf::Texture &texture) : Drawable{texture, {0, 0}}
 {
+    sf::Vector2u textureSize = texture.getSize();
+    int texturePartX{static_cast<int>(textureSize.x) / 6},
+        texturePartY{static_cast<int>(textureSize.y)};
+    this->sprite.setTextureRect(sf::IntRect{{0, 0}, {texturePartX, texturePartY}});
 }
 
 Player::~Player()
 {
-}
-
-void Player::setPosition(const sf::Vector2f &position)
-{
-    this->spr.setPosition(position);
 }
 
 void Player::setTile(Tile *tile)
@@ -21,25 +21,36 @@ void Player::setTile(Tile *tile)
 
 void Player::move(const sf::Vector2f &move)
 {
-    this->spr.move(move);
+    this->move(move);
 }
 
 void Player::move(const Tile::Direction &direction)
 {
-    auto nextTile = this->tile->getNeighbour(direction);
-    if (nextTile != nullptr)
+    Tile *nextTile = this->tile->getNeighbour(direction);
+    if (dynamic_cast<Walkable *>(nextTile) != nullptr)
     {
         this->tile = nextTile;
         this->setPosition(this->tile->getPosition());
     }
 }
 
-void Player::draw(sf::RenderWindow &window) const
-{
-    window.draw(this->spr);
-}
-
 Player::operator sf::Sprite()
 {
-    return this->spr;
+    auto elapsedTime = this->clock.getElapsedTime().asSeconds();
+    bool nextTexturePartShouldBeDrawn = elapsedTime > 0.4;
+    if (nextTexturePartShouldBeDrawn)
+    {
+        sf::IntRect textureRect = this->sprite.getTextureRect();
+        const sf::Texture &texture = this->sprite.getTexture();
+        if (textureRect.position.x < texture.getSize().x - textureRect.size.x)
+        {
+            textureRect.position.x += textureRect.size.x;
+        }
+        else
+            textureRect.position.x = 0;
+
+        this->sprite.setTextureRect(textureRect);
+        this->clock.restart();
+    }
+    return this->sprite;
 }

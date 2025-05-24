@@ -1,16 +1,11 @@
 #include "Tile.h"
 
-Tile::Tile(const sf::Vector2f &position) : position{position}, topNeighbour{nullptr}, rightNeighbour{nullptr}, botNeighbour{nullptr}, leftNeighbour{nullptr}
+Tile::Tile(const sf::Texture &texture, const sf::Vector2f &position) : Drawable{texture, position}, topNeighbour{nullptr}, rightNeighbour{nullptr}, botNeighbour{nullptr}, leftNeighbour{nullptr}
 {
 }
 
 Tile::~Tile()
 {
-}
-
-const sf::Vector2f &Tile::getPosition() const
-{
-    return this->position;
 }
 
 Tile *Tile::getNeighbour(const Tile::Direction &direction)

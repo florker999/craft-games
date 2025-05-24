@@ -1,28 +1,27 @@
 #include <SFML/Graphics.hpp>
+#include <SFML/System.hpp>
 #include "../Tile/Tile.h"
+#include "../Drawable/Drawable.h"
 
 #ifndef PLAYER_H
 #define PLAYER_H
 
 #pragma once
 
-class Player
+class Player : public Drawable
 {
 public:
-    Player(sf::Texture &texture);
+    Player(const sf::Texture &texture);
     ~Player();
+    operator sf::Sprite();
 
-    void setPosition(const sf::Vector2f &position);
     void setTile(Tile *tile);
     void move(const sf::Vector2f &move);
     void move(const Tile::Direction &direction);
-    void draw(sf::RenderWindow &window) const;
-
-    operator sf::Sprite();
 
 private:
-    sf::Sprite spr;
     Tile *tile;
+    sf::Clock clock;
 };
 
 #endif

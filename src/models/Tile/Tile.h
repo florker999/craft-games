@@ -1,17 +1,16 @@
 #include <SFML/Graphics.hpp>
+#include "../Drawable/Drawable.h"
 
 #ifndef TILE_H
 #define TILE_H
 
 #pragma once
 
-class Tile
+class Tile : public Drawable
 {
 public:
-    Tile(const sf::Vector2f &position);
-    ~Tile();
-
-    const sf::Vector2f &getPosition() const;
+    Tile(const sf::Texture &texture, const sf::Vector2f &position);
+    virtual ~Tile();
 
     enum Direction
     {
@@ -28,7 +27,6 @@ public:
     Tile *leftNeighbour;
 
 private:
-    sf::Vector2f position;
 };
 
 #endif

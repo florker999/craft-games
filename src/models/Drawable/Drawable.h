@@ -8,11 +8,15 @@
 class Drawable
 {
 public:
-    Drawable(const sf::Texture &texture); // probably requires adding the texture, position etc.
-    ~Drawable();
+    Drawable(const sf::Texture &texture, const sf::Vector2f &position); // probably requires adding the texture, position etc.
+    virtual ~Drawable() = 0;
     operator sf::Sprite();
 
-private:
+    void move(const sf::Vector2f &move);
+    void setPosition(const sf::Vector2f &position);
+    const sf::Vector2f getPosition() const;
+
+protected:
     sf::Sprite sprite;
 };
 

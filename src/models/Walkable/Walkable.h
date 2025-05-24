@@ -8,5 +8,5 @@ private:
     /* data */
 public:
     Walkable(/* args */);
-    ~Walkable();
+    virtual ~Walkable() = 0;
 };

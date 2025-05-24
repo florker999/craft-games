@@ -1,8 +1,11 @@
 #include "Map.h"
 #include "../Player/Player.h"
-
-Map::Map(int width, int height, int tileSize, sf::Texture &playerTexture)
+#include "../Ground/Ground.h"
+#include "../Wall/Wall.h"
+/*
+Map::Map(int width, int height, int tileSize)
 {
+    this->transparentTexture = sf::Texture{sf::Vector2u{32, 32}};
     int x = 0,
         y = 0;
 
@@ -14,7 +17,7 @@ Map::Map(int width, int height, int tileSize, sf::Texture &playerTexture)
         row.reserve(width);
         for (int j = 0; j < width; j++)
         {
-            row.push_back(Tile{sf::Vector2f(x, y)});
+            row.push_back(Tile{this->transparentTexture, sf::Vector2f(x, y)});
             x += tileSize;
         }
         this->tiles.push_back(row);
@@ -46,64 +49,103 @@ Map::Map(int width, int height, int tileSize, sf::Texture &playerTexture)
         }
     }
 }
+*/
+
+Map::Map(const std::vector<std::vector<GroundType>> &mapTemplate, const sf::Texture &grassTexture, const sf::Texture &wallTexture, int tileSize) : tiles{std::vector<std::vector<Tile *>>(mapTemplate.size())}
+{
+    int x = 0;
+    for (int columnIndex = 0; columnIndex < this->tiles.size(); columnIndex++)
+    {
+        int y = 0;
+        std::vector<Tile *> &tileColumn = this->tiles[columnIndex];
+        const std::vector<GroundType> &templateColumn = mapTemplate[columnIndex];
+
+        tileColumn.reserve(templateColumn.size());
+        for (GroundType groundType : templateColumn)
+        {
+            switch (groundType)
+            {
+            case GroundType::Grass:
+                tileColumn.push_back(new Ground{grassTexture, sf::Vector2f(x, y)});
+                break;
+
+            case GroundType::Wall:
+                tileColumn.push_back(new Wall{wallTexture, sf::Vector2f(x, y)}); // water is now walkable
+
+            default:
+                break;
+            }
+            y += tileSize;
+        }
+        x += tileSize;
+    }
+
+    int width = this->tiles.size(),
+        height = this->tiles[0].size();
+    for (int x = 0; x < width; x++)
+    {
+        for (int y = 0; y < height; y++)
+        {
+            Tile &tile{*this->tiles[x][y]};
+            if (x > 0)
+            {
+                tile.leftNeighbour = this->tiles[x - 1][y];
+            }
+            if (y < height - 1)
+            {
+                tile.botNeighbour = this->tiles[x][y + 1];
+            }
+            if (x < width - 1)
+            {
+                tile.rightNeighbour = this->tiles[x + 1][y];
+            }
+            if (y > 0)
+            {
+                tile.topNeighbour = this->tiles[x][y - 1];
+            }
+        }
+    }
+}
 
 Map::~Map()
 {
 }
 
-void Map::fill(Terrain base)
+/* void Map::fill(Tile *fillingTile, Tile *fillingTile2)
 {
     for (auto &row : this->tiles)
     {
+        int j{0};
         for (auto &tile : row)
         {
-            tile.addLayer(base);
+            const sf::Vector2f position = tile.getPosition();
+            Tile nextTile = j == 3 ? *fillingTile2 : *fillingTile;
+            nextTile.botNeighbour = tile.botNeighbour;
+            nextTile.leftNeighbour = tile.leftNeighbour;
+            nextTile.rightNeighbour = tile.rightNeighbour;
+            nextTile.topNeighbour = tile.topNeighbour;
+            nextTile.setPosition(position);
+            tile = nextTile;
+            j++;
         }
     }
 }
+ */
 
 void Map::draw(sf::RenderWindow &window)
 {
-    for (auto &row : this->tiles)
+    for (std::vector<Tile *> column : this->tiles)
     {
-        for (auto &tile : row)
+        for (Tile *tile : column)
         {
-            tile.draw(window);
+            window.draw(*tile);
         }
     }
-}
-
-void Map::movePlayer(Direction direction)
-{
-    auto player = this->tiles[this->playerY][this->playerX].popLayer();
-    switch (direction)
-    {
-    case Direction::Up:
-        this->playerY--;
-        break;
-
-    case Direction::Right:
-        this->playerX++;
-        break;
-
-    case Direction::Down:
-        this->playerY++;
-        break;
-
-    case Direction::Left:
-        this->playerX--;
-        break;
-
-    default:
-        break;
-    }
-
-    this->tiles[this->playerY][this->playerX].addLayer(player);
 }
 
 void Map::placePlayer(sf::Vector2f position, Player &player)
 {
-    Tile *playerTile{&this->tiles[position.y][position.x]};
+    Tile *playerTile{this->tiles[position.y][position.x]};
     player.setTile(playerTile);
     this->playerX = position.x;
     this->playerY = position.y;

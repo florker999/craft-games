@@ -8,7 +8,7 @@
 class Item : public Drawable
 {
 public:
-    Item(const sf::Texture &texture);
+    Item(const sf::Texture &texture, const sf::Vector2f &position);
     ~Item();
 
 private:
